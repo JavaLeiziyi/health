@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lzy.mapper.CourseMapper">
-
-    <select id="findBySid" parameterType="int" resultType="course">
-        select * from t_stu_course sc, t_course c where c.id=sc.cid and sc.sid = #{sid}
-    </select>
-</mapper>

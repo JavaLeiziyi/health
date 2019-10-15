@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzy.mapper.CheckItemMapper">
+    <insert id="save" parameterType="checkItem">
+        INSERT INTO `t_checkitem`(id,`code`,`name`,sex,age,price,`type`,attention,remark)
+        VALUES(#{id},#{code},#{name},#{sex},#{age},#{price},#{type},#{attention},#{remark})
+    </insert>
+    <select id="selectByCondition" parameterType="string" resultType="checkItem">
+        SELECT * FROM `t_checkitem`
+        <if test="value != null and value.length > 0">
+            WHERE code like #{queryString} or name like #{queryString}
+        </if>
+    </select>
+    <select id="findCountByCheckItemId" parameterType="int" resultType="long">
+        SELECT COUNT(*) FROM `t_checkgroup_checkitem` WHERE checkitem_id=#{id}
+    </select>
+    <delete id="delete" parameterType="int">
+        DELETE FROM `t_checkitem` WHERE id = #{id}
+    </delete>
+    <update id="edit" parameterType="checkItem">
+        UPDATE `t_checkitem`
+        <set>
+            <if test="code != null">
+                code=#{code},
+            </if>
+            <if test="name != null">
+                name=#{name},
+            </if>
+            <if test="sex != null">
+                sex=#{sex},
+            </if>
+            <if test="age != null">
+                age=#{age},
+            </if>
+            <if test="price != null">
+                price=#{price},
+            </if>
+            <if test="type != null">
+                type=#{type},
+            </if>
+            <if test="attention != null">
+                attention=#{attention},
+            </if>
+            <if test="remark != null">
+                remark=#{remark}
+            </if>
+        </set>
+        <where>
+            id=#{id}
+        </where>
+    </update>
+</mapper>
