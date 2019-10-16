@@ -70,4 +70,9 @@ public class CheckGroupServiceImpl implements CheckGroupService {
         //删除group表
         checkGroupMapper.deleteCheckGroup(groupId);
     }
+
+    @Override
+    public List<CheckGroup> findAll() {
+        return checkGroupMapper.findAll();
+    }
 }

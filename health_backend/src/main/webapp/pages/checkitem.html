@@ -198,7 +198,7 @@
                     </el-form>
                     <div slot="footer" class="dialog-footer">
                         <el-button @click="canalUpdate()">取消</el-button>
-                        <el-button type="primary" @click="handleEdit()">确定</el-button>
+                        <el-button type="primary" :disabled="isDisable" @click="handleEdit()">确定</el-button>
                     </div>
                 </el-dialog>
             </div>
@@ -253,10 +253,11 @@
                 this.$refs['dataEditForm'].validate((valid) => {
                     //校验表单成功
                     if (valid) {
+                        //关闭编辑表单
+                        this.dialogFormVisible4Edit = false;
+                        this.isDisable = true;
                         //axios发送ajax异步请求
                         axios.post('../checkitem/edit.do', this.formData).then((resp) => {
-                            //关闭编辑表单
-                            this.dialogFormVisible4Edit = false;
                             //修改数据成功
                             if (resp.data.flag) {
                                 this.$message({
@@ -270,6 +271,7 @@
                                 });
                             }
                         }).finally(() => {
+                            this.$refs['dataEditForm'].resetFields();
                             this.findPage();
                         });
                     } else {//校验表单失败
@@ -330,12 +332,13 @@
             //弹出添加窗口
             handleCreate() {
                 this.dialogFormVisible = true;
-                this.resetForm();
                 this.isDisable = false;
+                this.resetForm();
             },
             //弹出编辑窗口
             handleUpdate(row) {
                 this.dialogFormVisible4Edit = true;
+                this.isDisable = false;
                 //回显数据
                 this.formData = row;
             },

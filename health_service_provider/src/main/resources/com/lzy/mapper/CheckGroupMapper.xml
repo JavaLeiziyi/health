@@ -57,4 +57,7 @@
     <delete id="deleteCheckGroup" parameterType="int">
         DELETE FROM `t_checkgroup` WHERE id=#{groupId}
     </delete>
+    <select id="findAll" resultType="checkGroup">
+        select * from `t_checkgroup`
+    </select>
 </mapper>
