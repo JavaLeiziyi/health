@@ -19,7 +19,7 @@
     </delete>
     <update id="edit" parameterType="checkItem">
         UPDATE `t_checkitem`
-        <set>
+        <trim prefix="set" suffixOverrides=",">
             <if test="code != null">
                 code=#{code},
             </if>
@@ -44,7 +44,7 @@
             <if test="remark != null">
                 remark=#{remark}
             </if>
-        </set>
+        </trim>
         <where>
             id=#{id}
         </where>
