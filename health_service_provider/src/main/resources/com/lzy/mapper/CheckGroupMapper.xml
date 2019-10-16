@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzy.mapper.CheckGroupMapper">
+    <insert id="addCheckGroup" parameterType="checkGroup">
+        /*order: after 先执行插入语句,再获取数据, before: 先获取数据,在执行插入语句*/
+        /*keyProperty: 对应传入对象的属性名称*/
+        <selectKey resultType="int" order="AFTER" keyProperty="id">
+            select last_insert_id()
+        </selectKey>
+        INSERT INTO `t_checkgroup`(id,`code`,`name`,helpCode,sex,remark,attention)
+        VALUES(#{id},#{code},#{name},#{helpCode},#{sex},#{remark},#{attention})
+    </insert>
+    <insert id="addCheckGroupAndItem" parameterType="map">
+        INSERT INTO `t_checkgroup_checkitem`( checkgroup_id, checkitem_id)
+        VALUES(#{checkgroupId},#{checkitemId})
+    </insert>
+    <select id="findPage" parameterType="string" resultType="checkGroup">
+        select * from `t_checkgroup`
+        <if test="value != null and value.length > 0">
+            <where>
+                code like #{queryString} or name like #{queryString} or helpCode like #{queryString}
+            </where>
+        </if>
+    </select>
+    <select id="findCheckItemIdsByCheckGroupId" parameterType="int" resultType="int">
+        SELECT checkitem_id FROM `t_checkgroup_checkitem` WHERE checkgroup_id=#{checkGroupId}
+    </select>
+    <delete id="deleteItemIdByGroupId" parameterType="int">
+        DELETE FROM `t_checkgroup_checkitem` WHERE checkgroup_id=#{checkGroupId}
+    </delete>
+    <update id="updateGroup" parameterType="checkGroup">
+        UPDATE `t_checkgroup`
+        <trim prefix="set" suffixOverrides=",">
+            <if test="code != null">
+                code=#{code},
+            </if>
+            <if test="name != null">
+                name=#{name},
+            </if>
+            <if test="helpCode != null">
+                helpCode=#{helpCode},
+            </if>
+            <if test="sex != null">
+                sex=#{sex},
+            </if>
+            <if test="remark != null">
+                remark=#{remark},
+            </if>
+            <if test="attention != null">
+                attention=#{attention},
+            </if>
+        </trim>
+        <where>
+            id=#{id}
+        </where>
+    </update>
+    <delete id="deleteCheckGroup" parameterType="int">
+        DELETE FROM `t_checkgroup` WHERE id=#{groupId}
+    </delete>
+</mapper>

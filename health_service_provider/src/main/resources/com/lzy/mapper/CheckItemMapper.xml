@@ -42,11 +42,14 @@
                 attention=#{attention},
             </if>
             <if test="remark != null">
-                remark=#{remark}
+                remark=#{remark},
             </if>
         </trim>
         <where>
             id=#{id}
         </where>
     </update>
+    <select id="findAll" resultType="checkItem">
+        select * from `t_checkitem`
+    </select>
 </mapper>

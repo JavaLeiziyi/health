@@ -1,8 +1,6 @@
 package com.lzy.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.lzy.Service.CheckItemService;
 import com.lzy.constant.MessageConstant;
 import com.lzy.entity.PageResult;
@@ -13,8 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.ws.rs.Path;
+import java.util.List;
 
 @RestController
 @RequestMapping("/checkitem")
@@ -61,6 +58,16 @@ public class CheckItemController {
             return new Result(true,MessageConstant.EDIT_CHECKGROUP_SUCCESS);
         } catch (Exception e) {
             return new Result(false,MessageConstant.EDIT_CHECKGROUP_FAIL);
+        }
+    }
+
+    @RequestMapping("/findAll")
+    public Result findAll(){
+        try {
+            List<CheckItem> checkItemList =  checkItemService.findAll();
+            return new Result(true,MessageConstant.QUERY_CHECKITEM_SUCCESS,checkItemList);
+        } catch (Exception e) {
+            return new Result(true,MessageConstant.QUERY_CHECKITEM_FAIL);
         }
     }
 }

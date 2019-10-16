@@ -30,7 +30,7 @@
             <div class="filter-container">
                 <el-input placeholder="项目编码/项目名称" v-model="pagination.queryString" style="width: 200px;"
                           class="filter-item"></el-input>
-                <el-button @click="findPage()" class="dalfBut">查询</el-button>
+                <el-button @click="search()" class="dalfBut">查询</el-button>
                 <el-button type="primary" class="butT" @click="handleCreate()">新建</el-button>
             </div>
             <el-table size="small" current-row-key="id" :data="dataList" stripe highlight-current-row>
@@ -128,7 +128,7 @@
                     </el-form>
                     <div slot="footer" class="dialog-footer">
                         <el-button @click="dialogFormVisible = false">取消</el-button>
-                        <el-button type="primary" @click="handleAdd()">确定</el-button>
+                        <el-button type="primary" :disabled="isDisable" @click="handleAdd()">确定</el-button>
                     </div>
                 </el-dialog>
             </div>
@@ -197,7 +197,7 @@
                         </el-row>
                     </el-form>
                     <div slot="footer" class="dialog-footer">
-                        <el-button @click="dialogFormVisible4Edit = false">取消</el-button>
+                        <el-button @click="canalUpdate()">取消</el-button>
                         <el-button type="primary" @click="handleEdit()">确定</el-button>
                     </div>
                 </el-dialog>
@@ -215,6 +215,7 @@
     var vue = new Vue({
         el: '#app',
         data: {
+            isDisable: false,
             pagination: {//分页相关模型数据
                 currentPage: 1,//当前页码
                 pageSize: 10,//每页显示的记录数
@@ -235,33 +236,45 @@
             this.findPage();
         },
         methods: {
+            //查询按钮
+            search() {
+                this.pagination.currentPage = 1;
+                this.findPage();
+            },
+            //更新表单
+            canalUpdate() {
+                this.dialogFormVisible4Edit = false;
+                this.$refs['dataEditForm'].resetFields();
+                this.findPage();
+            },
             //编辑
             handleEdit() {
                 //校验表单数据
-                this.$refs['dataEditForm'].validate((valid)=>{
+                this.$refs['dataEditForm'].validate((valid) => {
                     //校验表单成功
-                    if(valid){
+                    if (valid) {
                         //axios发送ajax异步请求
-                        axios.post('../checkitem/edit.do',this.formData).then((resp)=>{
+                        axios.post('../checkitem/edit.do', this.formData).then((resp) => {
                             //关闭编辑表单
-                            this.dialogFormVisible4Edit=false;
+                            this.dialogFormVisible4Edit = false;
                             //修改数据成功
-                            if(resp.data.flag){
+                            if (resp.data.flag) {
                                 this.$message({
-                                    message:resp.data.message,
-                                    type:'success'
+                                    message: resp.data.message,
+                                    type: 'success'
                                 });
-                            }else{//修改数据失败
+                            } else {//修改数据失败
                                 this.$message({
-                                    message:resp.data.message,
-                                    type:'error'
+                                    message: resp.data.message,
+                                    type: 'error'
                                 });
                             }
-                        }).finally(()=>{
+                        }).finally(() => {
                             this.findPage();
                         });
-                    }else{//校验表单失败
+                    } else {//校验表单失败
                         this.$message.error('表单校验失败');
+                        return false;
                     }
                 });
             },
@@ -271,10 +284,11 @@
                 this.$refs['dataAddForm'].validate((valid) => {
                     //表单检验成功
                     if (valid) {
+                        //请求发送成功, 关闭添加窗口
+                        this.dialogFormVisible = false;
+                        this.isDisable = true;
                         //axios发送ajax异步请求
                         axios.post('../checkitem/add.do', this.formData).then((resp) => {
-                            //请求发送成功, 关闭添加窗口
-                            this.dialogFormVisible = false;
                             //检查项添加成功
                             if (resp.data.flag) {
                                 this.$message({
@@ -284,12 +298,13 @@
                             } else {//检查项添加失败
                                 this.$message.error(resp.data.message);
                             }
-                        }).finally(()=>{
+                        }).finally(() => {
                             //查询数据
                             this.findPage();
                         });
                     } else {//表单检验失败
                         this.$message.error('表单检验失败');
+                        return false;
                     }
                 });
             },
@@ -316,10 +331,11 @@
             handleCreate() {
                 this.dialogFormVisible = true;
                 this.resetForm();
+                this.isDisable = false;
             },
             //弹出编辑窗口
             handleUpdate(row) {
-                this.dialogFormVisible4Edit=true;
+                this.dialogFormVisible4Edit = true;
                 //回显数据
                 this.formData = row;
             },
@@ -331,16 +347,18 @@
             //删除
             handleDelete(row) {
                 //确认用户是否删除
-                this.$confirm('确认删除本检查项?', '提交', {type: 'warning'}).then(() => {
+                this.$confirm('确认删除本检查项?', '删除', {type: 'warning'}).then(() => {
                     //确认删除, axios发送ajax异步请求
                     axios.get('../checkitem/delete/' + row.id + '.do').then((resp) => {
                         //删除成功
                         if (resp.data.flag) {
                             this.$message.success(resp.data.message);
-                            this.findPage();
                         } else {//删除失败
                             this.$message.error(resp.data.message);
+                            return false;
                         }
+                    }).finally(() => {
+                        this.findPage();
                     });
                 });
             }
