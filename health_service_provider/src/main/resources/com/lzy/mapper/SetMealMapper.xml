@@ -9,4 +9,56 @@
             </where>
         </if>
     </select>
+    <insert id="addSetMeal" parameterType="setmeal">
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO `t_setmeal`(id,`name`,`code`,helpCode,sex,age,price,remark,attention,img)
+        VALUES(#{id},#{name},#{code},#{helpCode},#{sex},#{age},#{price},#{remark},#{attention},#{img})
+    </insert>
+    <insert id="addGroupIdsBySetMealId" parameterType="map">
+        INSERT INTO `t_setmeal_checkgroup`(setmeal_id,checkgroup_id)
+        VALUES(#{setMealId},#{checkGroupId})
+    </insert>
+    <select id="findGroupIdsBySetMealId" parameterType="int" resultType="int">
+        SELECT checkgroup_id FROM `t_setmeal_checkgroup` WHERE setmeal_id=#{setMealId}
+    </select>
+    <delete id="deleteSetMealAndCheckGroup" parameterType="int">
+        DELETE FROM `t_setmeal_checkgroup` WHERE setmeal_id=#{id}
+    </delete>
+    <update id="updateSetMeal" parameterType="setmeal">
+        UPDATE `t_setmeal`
+        <trim prefix="set" suffixOverrides=",">
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="code != null">
+                code = #{code},
+            </if>
+            <if test="helpCode != null">
+                helpCode = #{helpCode},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+            <if test="attention != null">
+                attention = #{attention},
+            </if>
+            <if test="img != null">
+                img = #{img},
+            </if>
+        </trim>
+        <where>
+            id=#{id}
+        </where>
+    </update>
+    <delete id="deleteSetMealById" parameterType="int">
+        DELETE FROM `t_setmeal` WHERE id=#{setMealId}
+    </delete>
 </mapper>

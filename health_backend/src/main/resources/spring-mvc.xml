@@ -34,7 +34,7 @@
     <dubbo:consumer check="false" timeout="600000"/>
 
     <!--file upload component-->
-    <bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize" value="104857600" />
         <property name="maxInMemorySize" value="4096" />
         <property name="defaultEncoding" value="UTF‐8"/>

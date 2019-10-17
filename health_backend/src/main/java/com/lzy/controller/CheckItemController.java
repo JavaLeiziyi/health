@@ -55,9 +55,9 @@ public class CheckItemController {
     public Result edit(@RequestBody CheckItem checkItem){
         try {
             checkItemService.edit(checkItem);
-            return new Result(true,MessageConstant.EDIT_CHECKGROUP_SUCCESS);
+            return new Result(true,MessageConstant.EDIT_CHECKITEM_SUCCESS);
         } catch (Exception e) {
-            return new Result(false,MessageConstant.EDIT_CHECKGROUP_FAIL);
+            return new Result(false,MessageConstant.EDIT_CHECKITEM_FAIL);
         }
     }
 

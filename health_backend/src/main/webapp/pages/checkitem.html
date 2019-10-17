@@ -322,6 +322,10 @@
                 axios.post('../checkitem/findPage.do', parameter).then((resp) => {
                     this.dataList = resp.data.rows;
                     this.pagination.total = resp.data.total;
+                    if (this.dataList.length == 0 && this.pagination.currentPage > 1) {
+                        this.pagination.currentPage -= 1;
+                        this.findPage();
+                    }
                 });
             },
             //重置表单
