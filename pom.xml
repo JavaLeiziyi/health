@@ -13,6 +13,7 @@
         <module>health_interface</module>
         <module>health_service_provider</module>
         <module>health_backend</module>
+        <module>health_jobs</module>
     </modules>
 
     <!--集中定义依赖版本号-->
@@ -59,6 +60,11 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
                 <version>${spring.version}</version>
             </dependency>
             <dependency>

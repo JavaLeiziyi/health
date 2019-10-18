@@ -11,6 +11,9 @@ public interface SetMealService {
 
     void add(Setmeal setmeal, Integer[] checkgroupIds);
 
+    //把图片信息保存到redis
+    void addRedis(String fileName);
+
     void addGroupIdsBySetMealId(Integer id, Integer[] checkgroupIds);
 
     List<Integer> findGroupIdsBySetMealId(Integer setMealId);

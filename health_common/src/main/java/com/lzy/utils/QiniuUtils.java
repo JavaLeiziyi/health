@@ -50,9 +50,11 @@ public class QiniuUtils {
 
         //默认不指定key的情况下，以文件内容的hash值作为文件名
         String key = fileName;
+        //鉴权
         Auth auth = Auth.create(accessKey, secretKey);
         String upToken = auth.uploadToken(bucket);
         try {
+            //key代表文件名
             Response response = uploadManager.put(bytes, key, upToken);
             //解析上传成功的结果
             DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);

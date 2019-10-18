@@ -20,4 +20,6 @@ public interface SetMealMapper {
     void updateSetMeal(Setmeal setmeal);
 
     void deleteSetMealById(Integer setMealId);
+
+    Setmeal findSetMealById(Integer id);
 }

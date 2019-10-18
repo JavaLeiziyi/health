@@ -3,13 +3,16 @@ package com.lzy.controller;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.lzy.Service.SetMealService;
 import com.lzy.constant.MessageConstant;
+import com.lzy.constant.RedisConstant;
 import com.lzy.entity.PageResult;
 import com.lzy.entity.QueryPageBean;
 import com.lzy.entity.Result;
 import com.lzy.pojo.Setmeal;
 import com.lzy.utils.QiniuUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import redis.clients.jedis.JedisPool;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,6 +24,9 @@ public class SetMealController {
 
     @Reference
     private SetMealService setmealService;
+
+    @Autowired
+    private JedisPool jedisPool;
 
     @RequestMapping("/findPage")
     public PageResult findPage(@RequestBody QueryPageBean queryPageBean) {
@@ -40,11 +46,13 @@ public class SetMealController {
             //filename="03a36073-a140-4942-9b9b-712cecb144901.jpg"
             int lastIndexOf = originalFilename.lastIndexOf(".");
             //获取文件后缀.jpg
-            String suffix = originalFilename.substring(lastIndexOf - 1);
+            String suffix = originalFilename.substring(lastIndexOf);
             //使用UUID随机产生文件名称，防止同名文件覆盖
             String fileName = UUID.randomUUID().toString() + suffix;
-            //上传文件
+            //上传图片
             QiniuUtils.upload2Qiniu(multipartFile.getBytes(), fileName);
+            //把图片信息保存到redis中
+            jedisPool.getResource().sadd(RedisConstant.SETMEAL_PIC_RESOURCES, fileName);
             //图片上传成功
             return new Result(true, MessageConstant.PIC_UPLOAD_SUCCESS, fileName);
         } catch (IOException e) {

@@ -61,4 +61,7 @@
     <delete id="deleteSetMealById" parameterType="int">
         DELETE FROM `t_setmeal` WHERE id=#{setMealId}
     </delete>
+    <select id="findSetMealById" parameterType="int" resultType="setmeal">
+        SELECT * FROM `t_setmeal` WHERE id = #{id}
+    </select>
 </mapper>

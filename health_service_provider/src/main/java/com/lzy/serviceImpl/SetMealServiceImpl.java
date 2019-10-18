@@ -4,14 +4,17 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.lzy.Service.SetMealService;
+import com.lzy.constant.RedisConstant;
 import com.lzy.entity.PageResult;
 import com.lzy.mapper.SetMealMapper;
 import com.lzy.pojo.Setmeal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import redis.clients.jedis.JedisPool;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 @Service(interfaceClass = SetMealService.class)
 @Transactional
@@ -19,6 +22,9 @@ public class SetMealServiceImpl implements SetMealService {
 
     @Autowired
     private SetMealMapper setMealMapper;
+
+    @Autowired
+    private JedisPool jedisPool;
 
     @Override
     public PageResult findPage(Integer currentPage, Integer pageSize, String queryString) {
@@ -34,6 +40,14 @@ public class SetMealServiceImpl implements SetMealService {
     public void add(Setmeal setmeal, Integer[] checkGroupIds) {
         setMealMapper.addSetMeal(setmeal);
         addGroupIdsBySetMealId(setmeal.getId(), checkGroupIds);
+        //图片保存到数据库成功, 把图片信息保存到redis
+        addRedis(setmeal.getImg());
+    }
+
+    //把图片信息保存到redis
+    @Override
+    public void addRedis(String fileName){
+        jedisPool.getResource().sadd(RedisConstant.SETMEAL_PIC_DB_RESOURCES,fileName);
     }
 
     @Override
@@ -55,13 +69,34 @@ public class SetMealServiceImpl implements SetMealService {
 
     @Override
     public void edit(Setmeal setmeal, Integer[] checkGroupIds) {
+        //编辑数据库数据之前,先获取imgFileName, 并在redis删除
+        Setmeal setMeal = findSetMealById(setmeal.getId());
+        deleteRedis(setMeal.getImg());
+
         setMealMapper.deleteSetMealAndCheckGroup(setmeal.getId());
         addGroupIdsBySetMealId(setmeal.getId(), checkGroupIds);
         setMealMapper.updateSetMeal(setmeal);
+
+        //编辑完数据库之后, 重新把imgFileName保存到redis中
+        addRedis(setmeal.getImg());
+    }
+
+    //根据setMealId获取imgFileName
+    public Setmeal findSetMealById(Integer id){
+        return setMealMapper.findSetMealById(id);
+    }
+
+    //在redis删除imgFileName
+    public void deleteRedis(String fileName){
+        jedisPool.getResource().srem(RedisConstant.SETMEAL_PIC_DB_RESOURCES,fileName);
     }
 
     @Override
     public void delete(Integer setMealId) {
+        //编辑数据库数据之前,先获取imgFileName, 并在redis删除
+        Setmeal setMeal = findSetMealById(setMealId);
+        deleteRedis(setMeal.getImg());
+
         setMealMapper.deleteSetMealAndCheckGroup(setMealId);
         setMealMapper.deleteSetMealById(setMealId);
     }
