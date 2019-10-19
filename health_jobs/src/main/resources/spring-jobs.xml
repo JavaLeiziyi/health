@@ -16,6 +16,13 @@
          http://www.springframework.org/schema/tx/spring-tx.xsd
          http://www.springframework.org/schema/context
          http://www.springframework.org/schema/context/spring-context.xsd">
+    <!--使用<context:component-scan/>后，即可将<context:annotation-config/>省去。-->
+    <!--作用是隐式地向Spring容器注册
+        AutowiredAnnotationBeanPostProcessor
+        CommonAnnotationBeanPostProcessor
+        PersistenceAnnotationBeanPostProcessor 
+        RequiredAnnotationBeanPostProcessor -->
+    <!--是用于激活那些已经在spring容器里注册过的bean-->
     <context:annotation-config/>
     <!--清理img的类交给spring托管-->
     <bean id="clearImgJob" class="com.lzy.jobs.ClearImgJob"/>

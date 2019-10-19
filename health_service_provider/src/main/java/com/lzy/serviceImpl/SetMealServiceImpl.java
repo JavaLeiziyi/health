@@ -40,8 +40,12 @@ public class SetMealServiceImpl implements SetMealService {
     public void add(Setmeal setmeal, Integer[] checkGroupIds) {
         setMealMapper.addSetMeal(setmeal);
         addGroupIdsBySetMealId(setmeal.getId(), checkGroupIds);
-        //图片保存到数据库成功, 把图片信息保存到redis
-        addRedis(setmeal.getImg());
+        //图片保存到数据库成功, 把图片信息保存到redis, 不影响原来业务逻辑地执行
+        try {
+            addRedis(setmeal.getImg());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //把图片信息保存到redis
@@ -70,15 +74,23 @@ public class SetMealServiceImpl implements SetMealService {
     @Override
     public void edit(Setmeal setmeal, Integer[] checkGroupIds) {
         //编辑数据库数据之前,先获取imgFileName, 并在redis删除
-        Setmeal setMeal = findSetMealById(setmeal.getId());
-        deleteRedis(setMeal.getImg());
+        try {
+            Setmeal setMeal = findSetMealById(setmeal.getId());
+            deleteRedis(setMeal.getImg());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         setMealMapper.deleteSetMealAndCheckGroup(setmeal.getId());
         addGroupIdsBySetMealId(setmeal.getId(), checkGroupIds);
         setMealMapper.updateSetMeal(setmeal);
 
         //编辑完数据库之后, 重新把imgFileName保存到redis中
-        addRedis(setmeal.getImg());
+        try {
+            addRedis(setmeal.getImg());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //根据setMealId获取imgFileName
@@ -93,9 +105,13 @@ public class SetMealServiceImpl implements SetMealService {
 
     @Override
     public void delete(Integer setMealId) {
-        //编辑数据库数据之前,先获取imgFileName, 并在redis删除
-        Setmeal setMeal = findSetMealById(setMealId);
-        deleteRedis(setMeal.getImg());
+        try {
+            //编辑数据库数据之前,先获取imgFileName, 并在redis删除
+            Setmeal setMeal = findSetMealById(setMealId);
+            deleteRedis(setMeal.getImg());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         setMealMapper.deleteSetMealAndCheckGroup(setMealId);
         setMealMapper.deleteSetMealById(setMealId);
