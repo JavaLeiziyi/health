@@ -6,6 +6,7 @@ import com.github.pagehelper.PageHelper;
 import com.lzy.Service.SetMealService;
 import com.lzy.constant.RedisConstant;
 import com.lzy.entity.PageResult;
+import com.lzy.mapper.CheckGroupMapper;
 import com.lzy.mapper.SetMealMapper;
 import com.lzy.pojo.Setmeal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,11 +95,13 @@ public class SetMealServiceImpl implements SetMealService {
     }
 
     //根据setMealId获取imgFileName
+    @Override
     public Setmeal findSetMealById(Integer id){
         return setMealMapper.findSetMealById(id);
     }
 
     //在redis删除imgFileName
+    @Override
     public void deleteRedis(String fileName){
         jedisPool.getResource().srem(RedisConstant.SETMEAL_PIC_DB_RESOURCES,fileName);
     }
@@ -115,5 +118,15 @@ public class SetMealServiceImpl implements SetMealService {
 
         setMealMapper.deleteSetMealAndCheckGroup(setMealId);
         setMealMapper.deleteSetMealById(setMealId);
+    }
+
+    @Override
+    public List<Setmeal> findAll() {
+        return setMealMapper.findAllSetMeal();
+    }
+    @Override
+    public Setmeal findById(Integer setMealId) {
+        //查询setMeal数据
+        return setMealMapper.findById(setMealId);
     }
 }

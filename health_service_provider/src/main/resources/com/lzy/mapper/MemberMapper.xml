@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzy.mapper.MemberMapper">
+    <select id="findMemberByTel" parameterType="string" resultType="member">
+    SELECT * FROM `t_member` WHERE phoneNumber=#{telephone}
+    </select>
+    <insert id="register" parameterType="member">
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_member (fileNumber,name,sex,idCard,phoneNumber, regTime,password,email,birthday,remark)
+        values (#{fileNumber},#{name},#{sex},#{idCard},#{phoneNumber},#{regTime},#{password},#{email},#{birthday},#{remark})
+    </insert>
+    <select id="findMemberNumberByDate" resultType="long" parameterType="map">
+        SELECT COUNT(id) FROM `t_member` WHERE regTime
+        BETWEEN #{dateBegin} AND #{dateEnd}
+    </select>
+    <select id="findTodayMemberCountByDate" parameterType="string" resultType="long">
+        SELECT COUNT(id) FROM `t_member` WHERE regTime=#{reportDate}
+    </select>
+    <select id="findAllCount" resultType="long">
+         SELECT COUNT(id) FROM `t_member`
+    </select>
+</mapper>

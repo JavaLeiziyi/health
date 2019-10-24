@@ -52,4 +52,8 @@
     <select id="findAll" resultType="checkItem">
         select * from `t_checkitem`
     </select>
+    <select id="findByCheckGroupId" resultType="checkItem" parameterType="int">
+        SELECT * FROM `t_checkgroup_checkitem` cc, `t_checkitem` c
+        WHERE cc.checkitem_id = c.id AND cc.checkgroup_id=#{checkGroupId}
+    </select>
 </mapper>

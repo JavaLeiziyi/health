@@ -64,4 +64,34 @@
     <select id="findSetMealById" parameterType="int" resultType="setmeal">
         SELECT * FROM `t_setmeal` WHERE id = #{id}
     </select>
+    <select id="findAllSetMeal" resultType="setmeal">
+        SELECT * FROM `t_setmeal`
+    </select>
+    <!--关联查询setMeal数据-->
+    <resultMap id="setMealMap" type="setmeal">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="helpCode" property="helpCode"/>
+        <result column="sex" property="sex"/>
+        <result column="age" property="age"/>
+        <result column="price" property="price"/>
+        <result column="remark" property="remark"/>
+        <result column="attention" property="attention"/>
+        <result column="img" property="img"/>
+        <collection property="checkGroups"
+                    javaType="arrayList"
+                    ofType="checkGroup"
+                    column="id"
+                    select="com.lzy.mapper.CheckGroupMapper.findBySetMealId"/>
+    </resultMap>
+    <select id="findById" resultMap="setMealMap" parameterType="int">
+        SELECT * FROM `t_setmeal` WHERE id=#{id}
+    </select>
+    <select id="findHotSetMeal" resultType="map">
+        SELECT s.name,COUNT(o.id) setmeal_count,
+        COUNT(o.id)/(SELECT COUNT(id) FROM `t_order`) proportion, s.attention
+        FROM `t_order`o,`t_setmeal` s WHERE o.setmeal_id = s.id
+        GROUP BY o.setmeal_id
+    </select>
 </mapper>

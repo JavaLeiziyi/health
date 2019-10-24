@@ -7,6 +7,7 @@ import com.lzy.entity.PageResult;
 import com.lzy.entity.QueryPageBean;
 import com.lzy.entity.Result;
 import com.lzy.pojo.CheckItem;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ public class CheckItemController {
     @Reference
     private CheckItemService checkItemService;
 
+    @PreAuthorize("hasAnyAuthority('CHECKITEM_QUERY')")
     @RequestMapping("/findPage")
     public PageResult findPage(@RequestBody QueryPageBean queryPageBean) {
         PageResult pageResult = checkItemService.findPage(
@@ -30,6 +32,7 @@ public class CheckItemController {
         return pageResult;
     }
 
+    @PreAuthorize("hasAnyAuthority('CHECKITEM_ADD')")
     @RequestMapping("/add")
     public Result add(@RequestBody CheckItem checkItem) {
         try {
@@ -40,6 +43,7 @@ public class CheckItemController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('CHECKITEM_DELETE')")
     @RequestMapping("/delete/{id}")
     public Result delete(@PathVariable("id") Integer id){
         Long count = checkItemService.findCountByCheckItemId(id);
@@ -51,6 +55,7 @@ public class CheckItemController {
         return new Result(true,MessageConstant.DELETE_CHECKITEM_SUCCESS);
     }
 
+    @PreAuthorize("hasAnyAuthority('CHECKITEM_EDIT')")
     @RequestMapping("/edit")
     public Result edit(@RequestBody CheckItem checkItem){
         try {
@@ -61,6 +66,7 @@ public class CheckItemController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('CHECKITEM_QUERY')")
     @RequestMapping("/findAll")
     public Result findAll(){
         try {

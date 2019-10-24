@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		 http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/mvc
+         http://www.springframework.org/schema/mvc/spring-mvc.xsd
+         http://code.alibabatech.com/schema/dubbo
+         http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+         http://www.springframework.org/schema/tx
+         http://www.springframework.org/schema/tx/spring-tx.xsd
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <!--spring MVC 的注解驱动-->
+    <mvc:annotation-driven>
+        <!--消息转换-->
+        <mvc:message-converters register-defaults="true">
+                <ref bean="fastJson"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <!--配置fastJson支持插件-->
+    <bean id="fastJson" class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+        <property name="supportedMediaTypes" value="application/json"/>
+        <!--配置features-->
+        <property name="features">
+            <list>
+                <!--设置null值也要输出，fastJson默认是关闭的 -->
+                <value>WriteMapNullValue</value>
+                <!--设置使用文本方式输出日期，fastjson默认是long -->
+                <value>WriteDateUseDateFormat</value>
+            </list> </property>
+    </bean>
+    <!--指定消费方应用的名称-->
+    <dubbo:application name="health_mobile"/>
+    <!--配置服务注册中心的ip地址-->
+    <dubbo:registry address="zookeeper://192.168.6.129:2181"/>
+    <!--批量扫描-->
+    <dubbo:annotation package="com.lzy.controller"/>
+    <!--全局超时设置, 设置不检测提供方-->
+    <dubbo:consumer check="false" timeout="600000"/>
+</beans>

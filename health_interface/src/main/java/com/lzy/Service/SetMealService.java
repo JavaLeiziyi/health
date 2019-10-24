@@ -20,5 +20,16 @@ public interface SetMealService {
 
     void edit(Setmeal setmeal, Integer[] checkGroupIds);
 
+    //根据setMealId获取imgFileName
+    Setmeal findSetMealById(Integer id);
+
+    //在redis删除imgFileName
+    void deleteRedis(String fileName);
+
     void delete(Integer setMealId);
+
+    List<Setmeal> findAll();
+
+    Setmeal findById(Integer id);
+
 }

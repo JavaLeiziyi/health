@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+
 @Service(interfaceClass = OrderSettingService.class)
 @Transactional
 public class OrderSettingServiceImpl implements OrderSettingService {
@@ -22,22 +23,24 @@ public class OrderSettingServiceImpl implements OrderSettingService {
             for (OrderSetting orderSetting : orderSettingList) {
                 //检查此数据(日期)是否存在
                 Long count = findCountByOrderDate(orderSetting.getOrderDate());
-                addOrEditNumberByDate(count,orderSetting);
+                addOrEditNumberByDate(count, orderSetting);
             }
         }
     }
 
     @Override
-    public List<Map> getOrderByMonth(String date) {//2019-10
+    public List<Map<String,Object>> getOrderByMonth(String date) {//2019-10
         List<OrderSetting> orderSettingList = exportExcel(date);
 
-        ArrayList<Map> data = null;
+        List<Map<String,Object>> data = null;
 
         if (orderSettingList != null && orderSettingList.size() > 0) {
             data = new ArrayList<>();
             for (OrderSetting orderSetting : orderSettingList) {
-                Map orderSettingMap = new HashMap();
-                orderSettingMap.put("date", orderSetting.getOrderDate().getDate());
+                Map<String,Object> orderSettingMap = new HashMap<String,Object>();
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(orderSetting.getOrderDate());
+                orderSettingMap.put("date", calendar.get(Calendar.DATE));
                 orderSettingMap.put("number", orderSetting.getNumber());
                 orderSettingMap.put("reservations", orderSetting.getReservations());
                 data.add(orderSettingMap);
@@ -50,12 +53,12 @@ public class OrderSettingServiceImpl implements OrderSettingService {
     public void editNumberByDate(OrderSetting orderSetting) {
         //检查此数据(日期)是否存在
         Long count = findCountByOrderDate(orderSetting.getOrderDate());
-        addOrEditNumberByDate(count,orderSetting);
+        addOrEditNumberByDate(count, orderSetting);
     }
 
     //添加或者更新数据(可预约人数)
     @Override
-    public void addOrEditNumberByDate(Long count, OrderSetting orderSetting){
+    public void addOrEditNumberByDate(Long count, OrderSetting orderSetting) {
         if (count > 0) {//存在
             //执行更新方法
             orderSettingMapper.updateNumberByOrderDate(orderSetting);

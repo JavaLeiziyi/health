@@ -19,4 +19,7 @@ public interface CheckItemMapper {
 
     List<CheckItem> findAll();
 
+    List<CheckItem> findByCheckGroupId(Integer checkGroupId);
+
+
 }

@@ -4,9 +4,9 @@
     <!-- 页面meta -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>传智健康</title>
-    <meta name="description" content="传智健康">
-    <meta name="keywords" content="传智健康">
+    <title>健康管理</title>
+    <meta name="description" content="健康管理">
+    <meta name="keywords" content="健康管理">
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
     <!-- 引入样式 -->
     <link rel="stylesheet" href="../plugins/elementui/index.css">
@@ -110,7 +110,7 @@
                                                     </template>
                                                 </template>
                                             </template>
-                                            <button v-if="dayobject.day" @click="handleOrderSet(dayobject.day)"
+                                            <button v-if="dayobject.day > today" @click="handleOrderSet(dayobject.day)"
                                                     class="orderbtn">设置
                                             </button>
                                         </template>
@@ -172,6 +172,11 @@
                         }
                     }).finally(() => {
                         this.initData(this.formatDate(day.getFullYear(), day.getMonth() + 1, "1"));
+                    });
+                }).catch(() => {
+                    this.$message({
+                        message:'取消输入',
+                        type:'warning'
                     });
                 });
             },
@@ -276,7 +281,7 @@
                         this.$message({
                             message: resp.data.message,
                             type: 'error'
-                        })
+                        });
                     }
                 });
             },

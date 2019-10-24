@@ -37,6 +37,8 @@ public class MessageConstant {
     public static final String ORDERSETTING_FAIL = "预约设置失败";
     public static final String ORDERSETTING_EXPORT_SUCCESS = "预约设置导出成功";
     public static final String ORDERSETTING_EXPORT_FAIL = "预约设置导出失败";
+    public static final String BUSINESS_EXPORT_SUCCESS = "运营情况导出成功";
+    public static final String BUSINESS_EXPORT_FAIL = "运营情况导出失败";
     public static final String ADD_MEMBER_FAIL = "新增会员失败";
     public static final String ADD_MEMBER_SUCCESS = "新增会员成功";
     public static final String DELETE_MEMBER_FAIL = "删除会员失败";
@@ -45,6 +47,7 @@ public class MessageConstant {
     public static final String EDIT_MEMBER_SUCCESS = "编辑会员成功";
     public static final String TELEPHONE_VALIDATECODE_NOTNULL = "手机号和验证码都不能为空";
     public static final String LOGIN_SUCCESS = "登录成功";
+    public static final String LOGIN_FAIL = "登录失败";
     public static final String VALIDATECODE_ERROR = "验证码输入错误";
     public static final String QUERY_ORDER_SUCCESS = "查询预约信息成功";
     public static final String QUERY_ORDER_FAIL = "查询预约信息失败";

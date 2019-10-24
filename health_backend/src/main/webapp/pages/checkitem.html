@@ -4,9 +4,9 @@
     <!-- 页面meta -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>传智健康</title>
-    <meta name="description" content="传智健康">
-    <meta name="keywords" content="传智健康">
+    <title>健康管理</title>
+    <meta name="description" content="健康管理">
+    <meta name="keywords" content="健康管理">
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
     <!-- 引入样式 -->
     <link rel="stylesheet" href="../plugins/elementui/index.css">
@@ -270,6 +270,8 @@
                                     type: 'error'
                                 });
                             }
+                        }).catch((r) => {
+                            this.showMessage(r);
                         }).finally(() => {
                             this.$refs['dataEditForm'].resetFields();
                             this.findPage();
@@ -300,6 +302,8 @@
                             } else {//检查项添加失败
                                 this.$message.error(resp.data.message);
                             }
+                        }).catch((r) => {
+                            this.showMessage(r);
                         }).finally(() => {
                             //查询数据
                             this.findPage();
@@ -326,6 +330,8 @@
                         this.pagination.currentPage -= 1;
                         this.findPage();
                     }
+                }).catch((r) => {
+                    this.showMessage(r);
                 });
             },
             //重置表单
@@ -364,10 +370,22 @@
                             this.$message.error(resp.data.message);
                             return false;
                         }
+                    }).catch((r) => {
+                        this.showMessage(r);
                     }).finally(() => {
                         this.findPage();
                     });
                 });
+            },
+            //权限不足提示
+            showMessage(r) {
+                if (r == 'Error:Request failed with status code 403') {
+                    this.$message.error('无访问权限');
+                    return;
+                } else {
+                    this.$message.error('未知错误');
+                    return;
+                }
             }
         }
     });

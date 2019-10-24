@@ -75,9 +75,9 @@ public class SetMealController {
     public Result findGroupIdsBySetMealId(@PathVariable("setMealId") Integer setMealId) {
         try {
             List<Integer> groupIds = setmealService.findGroupIdsBySetMealId(setMealId);
-            return new Result(true, MessageConstant.QUERY_SETMEAL_SUCCESS, groupIds);
+            return new Result(true, MessageConstant.QUERY_SETMEALLIST_SUCCESS, groupIds);
         } catch (Exception e) {
-            return new Result(false, MessageConstant.QUERY_SETMEAL_FAIL);
+            return new Result(false, MessageConstant.QUERY_SETMEALLIST_FAIL);
         }
     }
 

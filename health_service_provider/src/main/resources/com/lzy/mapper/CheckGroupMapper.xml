@@ -60,4 +60,23 @@
     <select id="findAll" resultType="checkGroup">
         select * from `t_checkgroup`
     </select>
+    <!--关联查询checkItem数据-->
+    <resultMap id="checkGroupMap" type="checkGroup">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="helpCode" property="helpCode"/>
+        <result column="sex" property="sex"/>
+        <result column="remark" property="remark"/>
+        <result column="attention" property="attention"/>
+        <collection property="checkItems"
+                    column="id"
+                    javaType="arrayList"
+                    ofType="checkItem"
+                    select="com.lzy.mapper.CheckItemMapper.findByCheckGroupId"/>
+    </resultMap>
+    <select id="findBySetMealId" parameterType="int" resultMap="checkGroupMap">
+        SELECT * FROM `t_setmeal_checkgroup` sc, `t_checkgroup` c
+        WHERE sc.checkgroup_id = c.id AND sc.setmeal_id=#{setMealId}
+    </select>
 </mapper>

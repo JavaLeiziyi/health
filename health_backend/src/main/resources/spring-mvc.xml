@@ -27,7 +27,8 @@
     <dubbo:registry address="zookeeper://192.168.6.129:2181"/>
 
     <!--batch scan ,public serviceImpl-->
-    <dubbo:annotation package="com.lzy.controller"/>
+    <!--UserSecurity 也需要进行远程调用-->
+    <dubbo:annotation package="com.lzy"/>
 
     <!--cancel startup check providers-->
     <!--global timeout setting-->

@@ -11,7 +11,7 @@ public interface OrderSettingService {
 
     void add(ArrayList<OrderSetting> orderSettingList);
 
-    List<Map> getOrderByMonth(String date);
+    List<Map<String,Object>> getOrderByMonth(String date);
 
     void editNumberByDate(OrderSetting orderSetting);
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzy.mapper.UserMapper">
+    <resultMap id="userMap" type="user">
+        <id column="id" property="id"/>
+        <result column="birthday" property="birthday"/>
+        <result column="gender" property="gender"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="remark" property="remark"/>
+        <result column="station" property="station"/>
+        <result column="telephone" property="telephone"/>
+        <collection property="roles"
+                    column="id"
+                    ofType="role"
+                    javaType="java.util.Set"
+                    select="com.lzy.mapper.RoleMapper.findRoleByUserId"/>
+    </resultMap>
+    <select id="findUserByUsername" parameterType="string" resultMap="userMap">
+        SELECT * FROM t_user WHERE username=#{username}
+    </select>
+</mapper>

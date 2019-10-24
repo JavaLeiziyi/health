@@ -7,8 +7,11 @@
     <update id="updateNumberByOrderDate" parameterType="orderSetting">
         UPDATE `t_ordersetting`
         <trim prefix="set" suffixOverrides=",">
-            <if test="orderDate != null">
-                number=#{number}
+            <if test="number != 0">
+                number=#{number},
+            </if>
+            <if test="reservations != 0">
+                reservations=#{reservations},
             </if>
         </trim>
         <where>
@@ -22,5 +25,8 @@
     <select id="getOrderByMonth" parameterType="map" resultType="orderSetting">
         SELECT * FROM `t_ordersetting` WHERE orderDate
         BETWEEN #{dateBegin} AND #{dateEnd}
+    </select>
+    <select id="findOrderSetByOrderDate" parameterType="java.util.Date" resultType="orderSetting">
+        SELECT * FROM `t_ordersetting` WHERE orderDate=#{orderDate}
     </select>
 </mapper>

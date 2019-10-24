@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface OrderSettingMapper {
+
     Long findCountByOrderDate(Date orderDate);
 
     void updateNumberByOrderDate(OrderSetting orderSetting);
@@ -14,4 +15,7 @@ public interface OrderSettingMapper {
     void addOrder(OrderSetting orderSetting);
 
     List<OrderSetting> getOrderByMonth(HashMap<String, String> map);
+
+    OrderSetting findOrderSetByOrderDate(Date orderDate);
+
 }

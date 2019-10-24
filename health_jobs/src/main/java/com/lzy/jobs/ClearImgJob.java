@@ -21,11 +21,13 @@ public class ClearImgJob {
                 RedisConstant.SETMEAL_PIC_RESOURCES,
                 RedisConstant.SETMEAL_PIC_DB_RESOURCES);
         if (stringSet != null && stringSet.size() > 0) {
+            System.out.println("清理开始: ");
             for (String fileName : stringSet) {
                 //清理七牛云上无效的图片
                 QiniuUtils.deleteFileFromQiniu(fileName);
                 //清理redis集合中的图片
                 jedisPool.getResource().srem(RedisConstant.SETMEAL_PIC_RESOURCES, fileName);
+                System.out.println("    "+fileName + "被清理了!");
             }
         }
     }

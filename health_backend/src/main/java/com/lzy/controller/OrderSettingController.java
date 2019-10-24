@@ -6,6 +6,7 @@ import com.lzy.Service.OrderSettingService;
 import com.lzy.constant.MessageConstant;
 import com.lzy.entity.Result;
 import com.lzy.pojo.OrderSetting;
+import com.lzy.utils.DateUtils;
 import com.lzy.utils.POIUtils;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -22,7 +23,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -49,13 +49,13 @@ public class OrderSettingController {
                 //读取Excel文件按的每一行数据
                 for (String[] strings : list) {
                     //解析每一列的值,第一列为date类型, 第二列为int类型
-                    OrderSetting orderSetting = new OrderSetting(new Date(strings[0]), Integer.parseInt(strings[1]));
+                    OrderSetting orderSetting = new OrderSetting(DateUtils.parseString2Date(strings[0]), Integer.parseInt(strings[1]));
                     orderSettingList.add(orderSetting);
                 }
                 //解析后的数据保存到数据库
                 orderSettingService.add(orderSettingList);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new Result(false, MessageConstant.IMPORT_ORDERSETTING_FAIL);
         }
@@ -65,7 +65,7 @@ public class OrderSettingController {
     @RequestMapping("/getOrderByMonth")
     public Result getOrderByMonth(String date) {//2019-10
         try {
-            List<Map> mapList = orderSettingService.getOrderByMonth(date);
+            List<Map<String,Object>> mapList = orderSettingService.getOrderByMonth(date);
             return new Result(true, MessageConstant.GET_ORDERSETTING_SUCCESS, mapList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,7 +93,7 @@ public class OrderSettingController {
      * @return
      */
     @RequestMapping("/exportExcel")
-    public void exportExcel(String fileName, String orderDate, HttpServletResponse response) {
+    public Result exportExcel(String fileName, String orderDate, HttpServletResponse response) {
         try {
             List<OrderSetting> orderSettingList = orderSettingService.exportExcel(orderDate);
 
@@ -123,8 +123,10 @@ public class OrderSettingController {
             }
             //excel文件对象通过流来写出去
             loadResponse(fileName, response, sheets, orderDate);
+            return new Result(true, MessageConstant.ORDERSETTING_EXPORT_SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
+            return new Result(false, MessageConstant.ORDERSETTING_EXPORT_FAIL);
         }
     }
 
