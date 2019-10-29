@@ -22,6 +22,7 @@ public class CheckGroupController {
     private CheckGroupService checkGroupService;
 
     @RequestMapping("/add")
+    //添加检查组
     public Result add(@RequestBody CheckGroup checkGroup, Integer[] checkitemIds) {
         try {
             checkGroupService.add(checkGroup, checkitemIds);

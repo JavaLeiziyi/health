@@ -15,7 +15,7 @@ public interface OrderSettingService {
 
     void editNumberByDate(OrderSetting orderSetting);
 
-    //添加或者更新数据
+    //添加/更新数据
     void addOrEditNumberByDate(Long count, OrderSetting orderSetting);
 
     //检查此数据(日期)是否存在
