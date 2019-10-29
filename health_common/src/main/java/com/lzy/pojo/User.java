@@ -1,5 +1,7 @@
 package com.lzy.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
@@ -10,6 +12,8 @@ import java.util.Set;
  */
 public class User implements Serializable{
     private Integer id; // 主键
+    private String name;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date birthday; // 生日
     private String gender; // 性别
     private String username; // 用户名，唯一
@@ -18,6 +22,14 @@ public class User implements Serializable{
     private String station; // 状态
     private String telephone; // 联系电话
     private Set<Role> roles = new HashSet<Role>(0);//对应角色集合
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Integer getId() {
         return id;

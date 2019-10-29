@@ -1,5 +1,6 @@
 package com.lzy.serviceImpl;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 import com.alibaba.dubbo.config.annotation.Service;
@@ -11,6 +12,7 @@ import com.lzy.pojo.Order;
 import com.lzy.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.text.SimpleDateFormat;
 
 @Service(interfaceClass = ReportService.class)
@@ -27,8 +29,8 @@ public class ReportServiceImpl implements ReportService {
     private SetMealMapper setMealMapper;
 
     @Override
-    public HashMap<String,Object> getReportData() throws Exception {
-        HashMap<String,Object> reportData = new HashMap<String,Object>();
+    public HashMap<String, Object> getReportData() throws Exception {
+        HashMap<String, Object> reportData = new HashMap<String, Object>();
         /**
          * reportDate: null,
          * todayNewMember: 0,
@@ -47,7 +49,7 @@ public class ReportServiceImpl implements ReportService {
          * ]
          */
         //0. 封装日期的集合
-        HashMap<String,Object> dateMap = new HashMap<String,Object>();
+        HashMap<String, Object> dateMap = new HashMap<String, Object>();
         //0.1 获取当前时间
         String reportDate = DateUtils.parseDate2String(DateUtils.getToday());
         //0.2 获取本周一的日期
@@ -60,7 +62,7 @@ public class ReportServiceImpl implements ReportService {
         String format = new SimpleDateFormat("yyyy-MM").format(dateBeginMonth) + "-31";
         Date dateEndMonth = DateUtils.parseString2Date(format);
 
-        //1. 获取当前时间
+        //1. 封装当前时间
         reportData.put("reportDate", reportDate);
 
         //2. 获取当天的会员数
@@ -118,9 +120,57 @@ public class ReportServiceImpl implements ReportService {
         reportData.put("thisMonthVisitsNumber", thisMonthVisitsNumber);
 
         //12. 查询热门套餐,取前四个
-        ArrayList<HashMap<String,Object>> hotSetmeal = setMealMapper.findHotSetMeal();
+        ArrayList<HashMap<String, Object>> hotSetmeal = setMealMapper.findHotSetMeal();
         reportData.put("hotSetmeal", hotSetmeal);
 
         return reportData;
+    }
+
+    @Override
+    public HashMap<String, Object> getMemberInfo() throws Exception {
+        HashMap<String, Object> map = new HashMap<>();
+
+        List<Map<String, String>> sexProList = memberMapper.findSex();
+        ArrayList<String> sexList = new ArrayList<>();
+
+        for (Map<String, String> sexMap : sexProList) {
+            sexList.add(sexMap.get("name"));
+        }
+
+        map.put("sexProList", sexProList);
+        map.put("sexList", sexList);
+
+        return map;
+    }
+
+    @Override
+    public HashMap<String, Object> getMemberAgeInfo(Map<String, String> ageMap) {
+        HashMap<String, Object> map = new HashMap<>();
+
+        ArrayList<String> ageList = new ArrayList<>();
+
+        ArrayList<Map<String, Object>> ageProList = new ArrayList<>();
+
+        Set<String> beginAges = ageMap.keySet();
+        for (String beginAge : beginAges) {
+
+            String endAge = ageMap.get(beginAge);
+            String name = beginAge + "-" + endAge + " 岁";
+            ageList.add(name);
+
+            HashMap<String, String> tempMap = new HashMap<>();
+            tempMap.put("beginAge",beginAge);
+            tempMap.put("endAge",endAge);
+            Integer value = memberMapper.getMemberAgeInfo(tempMap);
+
+            HashMap<String, Object> ageProMap = new HashMap<>();
+            ageProMap.put("value",value);
+            ageProMap.put("name",name);
+            ageProList.add(ageProMap);
+        }
+        map.put("ageList",ageList);
+        map.put("ageProList",ageProList);
+
+        return map;
     }
 }

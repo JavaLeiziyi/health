@@ -9,6 +9,7 @@ import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -17,11 +18,11 @@ import java.io.InputStream;
  * 七牛云工具类
  */
 public class QiniuUtils {
-    public  static String accessKey = "";
-    public  static String secretKey = "";
-    public  static String bucket = "";
+    public static String accessKey = "DYJSR4r793i-YOJ6rUiULbLCtBI4cXhQ22N68I5U";
+    public static String secretKey = "ogBCEYM5WPLiL_2BLl7-tf8t-bxn4RQznh-6sMHA";
+    public static String bucket = "lzy-storage01";
 
-    public static void upload2Qiniu(String filePath,String fileName){
+    public static void upload2Qiniu(String filePath, String fileName) {
         //构造一个带指定Zone对象的配置类
         Configuration cfg = new Configuration(Zone.zone0());
         UploadManager uploadManager = new UploadManager(cfg);
@@ -42,7 +43,8 @@ public class QiniuUtils {
     }
 
     //上传文件
-    public static void upload2Qiniu(byte[] bytes, String fileName){
+    public static void upload2Qiniu(byte[] bytes, String fileName) {
+
         //构造一个带指定Zone对象的配置类
         Configuration cfg = new Configuration(Zone.zone0());
         //...其他参数参考类注释
@@ -71,8 +73,39 @@ public class QiniuUtils {
         }
     }
 
+    //上传文件
+    public static void upload2Qiniu2(byte[] bytes, String fileName)  {
+
+        //构造一个带指定Zone对象的配置类
+        Configuration cfg = new Configuration(Zone.zone0());
+        //...其他参数参考类注释
+        UploadManager uploadManager = new UploadManager(cfg);
+
+        //默认不指定key的情况下，以文件内容的hash值作为文件名
+        String key = fileName;
+        //鉴权
+        Auth auth = Auth.create(accessKey, secretKey);
+        String upToken = auth.uploadToken("lzy-storage02");
+        try {
+            //key代表文件名
+            Response response = uploadManager.put(bytes, key, upToken);
+            //解析上传成功的结果
+            DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
+            System.out.println(putRet.key);
+            System.out.println(putRet.hash);
+        } catch (QiniuException ex) {
+            Response r = ex.response;
+            System.err.println(r.toString());
+            try {
+                System.err.println(r.bodyString());
+            } catch (QiniuException ex2) {
+                //ignore
+            }
+        }
+    }
+
     //删除文件
-    public static void deleteFileFromQiniu(String fileName){
+    public static void deleteFileFromQiniu(String fileName) {
         //构造一个带指定Zone对象的配置类
         Configuration cfg = new Configuration(Zone.zone0());
         String key = fileName;

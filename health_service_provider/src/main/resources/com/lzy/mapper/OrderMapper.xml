@@ -20,8 +20,8 @@
     <select id="findCountBysetmealId" parameterType="int" resultType="long">
         SELECT COUNT(id) FROM `t_order` WHERE setmeal_id=#{id}
     </select>
-    <select id="findCountByDate" parameterType="string" resultType="long">
-        SELECT COUNT(id) FROM `t_order` where orderDate=#{reportDate}
+    <select id="findCountByDate" parameterType="map" resultType="long">
+        SELECT COUNT(id) FROM `t_order` where orderDate=#{orderDate}
         <if test="orderStatus != null">
             AND orderStatus=#{orderStatus}
         </if>
@@ -32,5 +32,7 @@
             AND orderStatus=#{orderStatus}
         </if>
     </select>
-
+    <delete id="cleanOrderSetting" parameterType="string">
+        DELETE FROM `t_ordersetting` WHERE orderDate &lt; #{dateStr}
+    </delete>
 </mapper>

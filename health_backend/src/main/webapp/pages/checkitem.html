@@ -379,12 +379,10 @@
             },
             //权限不足提示
             showMessage(r) {
-                if (r == 'Error:Request failed with status code 403') {
+                if (r == "Error: Request failed with status code 403") {
                     this.$message.error('无访问权限');
-                    return;
                 } else {
                     this.$message.error('未知错误');
-                    return;
                 }
             }
         }

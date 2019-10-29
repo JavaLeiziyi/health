@@ -28,6 +28,7 @@ public class SpringSecurityUserService implements UserDetailsService {
         if (user == null) {
             return null;
         }
+
         //获取用户对应的角色
         Set<Role> roles = user.getRoles();
         //用户角色封装到"权限(GrantedAuthority)"的list集合
@@ -41,7 +42,6 @@ public class SpringSecurityUserService implements UserDetailsService {
                 //授权
                 list.add(new SimpleGrantedAuthority(permission.getKeyword()));
             }
-
         }
 
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(

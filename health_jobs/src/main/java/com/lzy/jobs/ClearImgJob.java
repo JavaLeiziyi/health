@@ -15,7 +15,7 @@ public class ClearImgJob {
     @Autowired
     private JedisPool jedisPool;
 
-    public void clearImg() {
+    public void clearSetMealImg() {
         //根据Redis中保存的两个Set集合进行差值计算
         Set<String> stringSet = jedisPool.getResource().sdiff(
                 RedisConstant.SETMEAL_PIC_RESOURCES,
@@ -27,6 +27,23 @@ public class ClearImgJob {
                 QiniuUtils.deleteFileFromQiniu(fileName);
                 //清理redis集合中的图片
                 jedisPool.getResource().srem(RedisConstant.SETMEAL_PIC_RESOURCES, fileName);
+                System.out.println("    "+fileName + "被清理了!");
+            }
+        }
+    }
+
+    public void clearMenuImg() {
+        //根据Redis中保存的两个Set集合进行差值计算
+        Set<String> stringSet = jedisPool.getResource().sdiff(
+                RedisConstant.MENU_PIC_RESOURCES,
+                RedisConstant.MENU_PIC_DB_RESOURCES);
+        if (stringSet != null && stringSet.size() > 0) {
+            System.out.println("清理开始: ");
+            for (String fileName : stringSet) {
+                //清理七牛云上无效的图片
+                QiniuUtils.deleteFileFromQiniu(fileName);
+                //清理redis集合中的图片
+                jedisPool.getResource().srem(RedisConstant.MENU_PIC_RESOURCES, fileName);
                 System.out.println("    "+fileName + "被清理了!");
             }
         }

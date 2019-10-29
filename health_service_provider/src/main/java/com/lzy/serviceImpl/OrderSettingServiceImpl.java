@@ -83,4 +83,9 @@ public class OrderSettingServiceImpl implements OrderSettingService {
         map.put("dateEnd", dateEnd);
         return orderSettingMapper.getOrderByMonth(map);
     }
+
+    @Override
+    public void cleanOrderSetting(String dateStr) {
+        orderSettingMapper.cleanOrderSetting(dateStr);
+    }
 }

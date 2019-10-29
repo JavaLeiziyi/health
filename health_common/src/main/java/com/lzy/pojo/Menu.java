@@ -17,6 +17,24 @@ public class Menu implements Serializable{
     private Set<Role> roles = new HashSet<Role>(0);//角色集合
     private List<Menu> children = new ArrayList<>();//子菜单集合
     private Integer parentMenuId;//父菜单id
+    private Integer level;
+
+    @Override
+    public String toString() {
+        return "Menu{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", linkUrl='" + linkUrl + '\'' +
+                ", path='" + path + '\'' +
+                ", priority=" + priority +
+                ", description='" + description + '\'' +
+                ", icon='" + icon + '\'' +
+                ", roles=" + roles +
+                ", children=" + children +
+                ", parentMenuId=" + parentMenuId +
+                ", level=" + level +
+                '}';
+    }
 
     public Integer getId() {
         return id;
@@ -66,6 +84,14 @@ public class Menu implements Serializable{
         this.description = description;
     }
 
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
     public Set<Role> getRoles() {
         return roles;
     }
@@ -82,19 +108,19 @@ public class Menu implements Serializable{
         this.children = children;
     }
 
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
     public Integer getParentMenuId() {
         return parentMenuId;
     }
 
     public void setParentMenuId(Integer parentMenuId) {
         this.parentMenuId = parentMenuId;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 }

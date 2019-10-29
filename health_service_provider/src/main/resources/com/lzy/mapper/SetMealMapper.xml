@@ -92,6 +92,6 @@
         SELECT s.name,COUNT(o.id) setmeal_count,
         COUNT(o.id)/(SELECT COUNT(id) FROM `t_order`) proportion, s.attention
         FROM `t_order`o,`t_setmeal` s WHERE o.setmeal_id = s.id
-        GROUP BY o.setmeal_id
+        GROUP BY o.setmeal_id order by setmeal_count desc limit 4
     </select>
 </mapper>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>会员统计</title>
+    <meta name="description" content="健康管理">
+    <meta name="keywords" content="健康管理">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <script src="../plugins/echarts/echarts.js"></script>
+</head>
+<body class="hold-transition">
+<div id="app">
+    <div class="content-header">
+        <h1>会员管理
+            <small>会员统计</small>
+        </h1>
+        <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb">
+            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item>会员管理</el-breadcrumb-item>
+            <el-breadcrumb-item>会员统计</el-breadcrumb-item>
+        </el-breadcrumb>
+    </div>
+
+    <div class="app-container">
+        <div class="box">
+            <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+            <div id="chart1" style="height:600px;"></div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <div class="box">
+            <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+            <div id="chart2" style="height:600px;"></div>
+        </div>
+    </div>
+
+</div>
+</body>
+<!-- 引入组件库 -->
+<script src="../js/vue.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script src="../plugins/elementui/index.js"></script>
+<script>
+    new Vue({
+        el: "#app",
+        methods: {
+            searchSex() {
+                var myChart1 = echarts.init(document.getElementById('chart1'));
+                axios.post("/report/getMemberSexInfo.do", this.value).then((res) => {
+                    myChart1.setOption(
+                        {
+                            title: {
+                                text: '会员性别统计',
+                                subtext: '男女占比',
+                                x: 'center'
+                            },
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                            },
+                            legend: {
+                                orient: 'vertical',
+                                left: 'left',
+                                data: res.data.data.sexList/*['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']*/
+                            },
+                            series: [
+                                {
+                                    name: '性别占比',
+                                    type: 'pie',
+                                    radius: '55%',
+                                    center: ['50%', '60%'],
+                                    data: res.data.data.sexProList/*[
+                                        {value: 335, name: '直接访问'},
+                                        {value: 310, name: '邮件营销'},
+                                        {value: 234, name: '联盟广告'},
+                                        {value: 135, name: '视频广告'},
+                                        {value: 1548, name: '搜索引擎'}
+                                    ]*/,
+                                    itemStyle: {
+                                        emphasis: {
+                                            shadowBlur: 10,
+                                            shadowOffsetX: 0,
+                                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                        }
+                                    }
+                                }
+                            ]
+                        });
+                });
+            },
+            searchAge(){
+                var myChart2 = echarts.init(document.getElementById('chart2'));
+                axios.post("/report/getMemberAgeInfo.do", this.value).then((res) => {
+                    myChart2.setOption(
+                        {
+                            title: {
+                                text: '会员年龄段统计',
+                                subtext: '年龄段占比',
+                                x: 'center'
+                            },
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                            },
+                            legend: {
+                                orient: 'vertical',
+                                left: 'left',
+                                data: res.data.data.ageList/*['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']*/
+                            },
+                            series: [
+                                {
+                                    name: '年龄占比',
+                                    type: 'pie',
+                                    radius: '55%',
+                                    center: ['50%', '60%'],
+                                    data: res.data.data.ageProList/*[
+                                        {value: 335, name: '直接访问'},
+                                        {value: 310, name: '邮件营销'},
+                                        {value: 234, name: '联盟广告'},
+                                        {value: 135, name: '视频广告'},
+                                        {value: 1548, name: '搜索引擎'}
+                                    ]*/,
+                                    itemStyle: {
+                                        emphasis: {
+                                            shadowBlur: 10,
+                                            shadowOffsetX: 0,
+                                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                        }
+                                    }
+                                }
+                            ]
+                        });
+                });
+            }
+        },
+        mounted() {
+            this.searchSex();
+            this.searchAge();
+        }
+    });
+</script>
+</html>

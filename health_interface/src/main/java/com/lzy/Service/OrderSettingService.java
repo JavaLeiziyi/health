@@ -22,4 +22,6 @@ public interface OrderSettingService {
     Long findCountByOrderDate(Date date);
 
     List<OrderSetting> exportExcel(String orderDate);
+
+    void cleanOrderSetting(String s);
 }

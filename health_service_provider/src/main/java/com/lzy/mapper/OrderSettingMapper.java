@@ -18,4 +18,5 @@ public interface OrderSettingMapper {
 
     OrderSetting findOrderSetByOrderDate(Date orderDate);
 
+    void cleanOrderSetting(String dateStr);
 }

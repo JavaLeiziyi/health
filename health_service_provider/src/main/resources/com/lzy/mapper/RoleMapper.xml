@@ -16,4 +16,7 @@
         SELECT * FROM `t_user_role` ur,`t_role` r WHERE ur.role_id = r.id
         AND ur.user_id = #{id}
     </select>
+    <select id="findRoles" resultType="role">
+        SELECT * FROM `t_role`
+    </select>
 </mapper>

@@ -19,4 +19,63 @@
     <select id="findUserByUsername" parameterType="string" resultMap="userMap">
         SELECT * FROM t_user WHERE username=#{username}
     </select>
+    <select id="findPage" parameterType="string" resultType="user">
+        SELECT * FROM `t_user`
+        <where>
+            <if test="value !=null">
+                `name` LIKE #{queryString} OR username LIKE #{queryString}
+            </if>
+        </where>
+    </select>
+    <insert id="add" parameterType="user">
+        <selectKey resultType="int" keyColumn="id" order="AFTER" keyProperty="id">
+            select last_insert_id()
+        </selectKey>
+        INSERT INTO `t_user`(id,`name`,birthday,gender,username,`password`,remark,station,telephone)
+        VALUES(#{id},#{name},#{birthday},#{gender},#{username},#{password},#{remark},#{station},#{telephone})
+    </insert>
+    <insert id="addUserIdByRoleId" parameterType="map">
+        INSERT INTO `t_user_role`(user_id,role_id) VALUES(#{userId},#{roleId})
+    </insert>
+    <delete id="deleteRoleIdByUserId" parameterType="int">
+        DELETE FROM `t_user_role` WHERE user_id=#{userId}
+    </delete>
+    <delete id="delete" parameterType="int">
+        DELETE FROM `t_user` WHERE id=#{userId}
+    </delete>
+    <select id="findRoleIdsByUserId" parameterType="int" resultType="int">
+        SELECT role_id FROM `t_user_role` WHERE user_id = #{id}
+    </select>
+    <update id="edit" parameterType="user">
+        UPDATE `t_user`
+        <trim prefix="set" suffixOverrides=",">
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday},
+            </if>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+            <if test="station != null">
+                station = #{station},
+            </if>
+            <if test="telephone != null">
+                telephone = #{telephone},
+            </if>
+        </trim>
+        <where>
+            id = #{id}
+        </where>
+    </update>
 </mapper>

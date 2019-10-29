@@ -47,7 +47,7 @@
     <!--批量扫描接口生成代理对象-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <!--指定xml文件所在的包-->
-        <property name="basePackage" value="com/lzy/mapper"/>
+        <property name="basePackage" value="com.lzy.mapper"/>
     </bean>
 
 </beans>

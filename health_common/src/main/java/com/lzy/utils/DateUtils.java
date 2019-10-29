@@ -239,6 +239,7 @@ public class DateUtils {
         c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek() + 6);
         return c.getTime();
     }
+
     //获得上周一的日期
     public static Date geLastWeekMonday(Date date) {
         Calendar cal = Calendar.getInstance();
@@ -274,19 +275,34 @@ public class DateUtils {
     }
 
     //获得今天日期
-    public static Date getToday(){
+    public static Date getToday() {
         return new Date();
     }
 
     //获得本月一日的日期
-    public static Date getFirstDay4ThisMonth(){
+    public static Date getFirstDay4ThisMonth() {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH,1);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
         return calendar.getTime();
+    }
+
+    //获取当前月份的前一月
+    public static String getBeforeMonth() {
+        //1. 获取当前时间
+        Calendar calendar = Calendar.getInstance();
+        //2. 获取前一个月的最后一天
+        //2.1 获取当前月份
+        int month = calendar.get(Calendar.MONTH);
+        //2.2 设置当月份为前一个月
+        calendar.set(Calendar.MONTH, month - 1);
+        Date date = calendar.getTime();
+        String dateStr = new SimpleDateFormat("yyyy-MM").format(date);
+        return dateStr;
     }
 
     public static void main(String[] args) {
         try {
+            System.out.println(getBeforeMonth());
             System.out.println("本周一" + parseDate2String(getThisWeekMonday()));
             System.out.println("本月一日" + parseDate2String(getFirstDay4ThisMonth()));
         } catch (Exception e) {

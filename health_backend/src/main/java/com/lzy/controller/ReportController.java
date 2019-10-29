@@ -8,19 +8,20 @@ import com.lzy.Service.SetMealService;
 import com.lzy.constant.MessageConstant;
 import com.lzy.entity.Result;
 import com.lzy.pojo.Setmeal;
+import com.lzy.utils.DateUtils;
+import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -39,35 +40,59 @@ public class ReportController {
     @Reference
     private ReportService reportService;
 
+    //展示每个年龄段的会员的占比
+    @RequestMapping("/getMemberAgeInfo")
+    private Result getMemberAgeInfo() {
+        try {
+            Map<String, String> ageMap = new HashMap<>();
+            ageMap.put("0", "18");
+            ageMap.put("19", "30");
+            ageMap.put("31", "45");
+            ageMap.put("46", "0");
+            HashMap<String, Object> map = reportService.getMemberAgeInfo(ageMap);
+            return new Result(true, MessageConstant.GET_SETMEAL_COUNT_REPORT_SUCCESS, map);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, MessageConstant.GET_MEMBER_NUMBER_REPORT_FAIL);
+        }
+    }
+
+    //展示男女会员的占比
+    @RequestMapping("/getMemberSexInfo")
+    private Result getMemberInfo() {
+        try {
+            HashMap<String, Object> map = reportService.getMemberInfo();
+            return new Result(true, MessageConstant.GET_SETMEAL_COUNT_REPORT_SUCCESS, map);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, MessageConstant.GET_MEMBER_NUMBER_REPORT_FAIL);
+        }
+    }
+
     //展示过去一年 时间内每个月的会员总数据量
     @RequestMapping("/getMemberReport")
-    public Result getMemberReport() {
-
+    public Result getMemberReport(@RequestBody List<String> list) {
         try {
             //定义存放月份和每月会员数量的集合
             Map<String, List> map = new HashMap<>();
 
             //1. 指定月份的集合
-            ArrayList<String> months = new ArrayList<>();
+            List<String> months = DateUtils.getMonthBetween(list.get(0), list.get(1), "yyyy-MM");
 
             //2. 指定会员数量的集合
             ArrayList<Long> memberCount = new ArrayList<>();
 
-            //2. 获取当前日期
+            /*//2. 获取当前日期
             Calendar calendar = Calendar.getInstance();
-            //3. 返回12月之前的日期
-            calendar.add(Calendar.MONTH, -12);
 
-            for (int i = 0; i < 12; i++) {
-                //4. 从12月之前开始增加, 每次加1月
-                calendar.add(Calendar.MONTH, 1);
-                months.add(new SimpleDateFormat("yyyy.MM").format(calendar.getTime()));
-                //5. 获取当前月份
-                String date = new SimpleDateFormat("yyyy-MM").format(calendar.getTime());
-                //6. 根据当前月份查询每个月会员的数量
-                Long count = memberService.getMemberByDate(date);
+            //3. 返回12月之前的日期
+            calendar.add(Calendar.MONTH, -12);*/
+
+            for (String month : months) {
+                Long count = memberService.getMemberByDate(month);
                 memberCount.add(count);
             }
+
             map.put("months", months);
             map.put("memberCount", memberCount);
             return new Result(true, MessageConstant.GET_MEMBER_NUMBER_REPORT_SUCCESS, map);

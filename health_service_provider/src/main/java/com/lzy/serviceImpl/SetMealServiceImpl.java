@@ -1,9 +1,11 @@
 package com.lzy.serviceImpl;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.lzy.Service.SetMealService;
+import com.lzy.constant.MessageConstant;
 import com.lzy.constant.RedisConstant;
 import com.lzy.entity.PageResult;
 import com.lzy.mapper.CheckGroupMapper;
@@ -51,8 +53,8 @@ public class SetMealServiceImpl implements SetMealService {
 
     //把图片信息保存到redis
     @Override
-    public void addRedis(String fileName){
-        jedisPool.getResource().sadd(RedisConstant.SETMEAL_PIC_DB_RESOURCES,fileName);
+    public void addRedis(String fileName) {
+        jedisPool.getResource().sadd(RedisConstant.SETMEAL_PIC_DB_RESOURCES, fileName);
     }
 
     @Override
@@ -96,14 +98,14 @@ public class SetMealServiceImpl implements SetMealService {
 
     //根据setMealId获取imgFileName
     @Override
-    public Setmeal findSetMealById(Integer id){
+    public Setmeal findSetMealById(Integer id) {
         return setMealMapper.findSetMealById(id);
     }
 
     //在redis删除imgFileName
     @Override
-    public void deleteRedis(String fileName){
-        jedisPool.getResource().srem(RedisConstant.SETMEAL_PIC_DB_RESOURCES,fileName);
+    public void deleteRedis(String fileName) {
+        jedisPool.getResource().srem(RedisConstant.SETMEAL_PIC_DB_RESOURCES, fileName);
     }
 
     @Override
@@ -122,11 +124,49 @@ public class SetMealServiceImpl implements SetMealService {
 
     @Override
     public List<Setmeal> findAll() {
-        return setMealMapper.findAllSetMeal();
+        List<Setmeal> setmealList;
+        try {
+            //1. redis连接成功
+            //2. 获取redis中的数据
+            String setmealStr = jedisPool.getResource().get(RedisConstant.SETMEAL_LIST_RESOURCES);
+            setmealList = (List<Setmeal>) JSON.parse(setmealStr);
+            //3. setmealList为空
+            if (setmealList == null || setmealList.size() == 0) {
+                //4. 查询数据库
+                setmealList = setMealMapper.findAllSetMeal();
+                //5. 数据存到redis
+                Object setmealStrToJson = JSON.toJSON(setmealList);
+                jedisPool.getResource().set(RedisConstant.SETMEAL_LIST_RESOURCES, setmealStrToJson.toString());
+            }
+        } catch (Exception e) {
+            //5.redis连接失败, 查询数据库
+            setmealList = setMealMapper.findAllSetMeal();
+        }
+
+        return setmealList;
     }
+
     @Override
     public Setmeal findById(Integer setMealId) {
+        Setmeal setmealDetail;
+        try {
+            //1. 查询redis缓存数据
+            String setmealDetailStr = jedisPool.getResource().get(RedisConstant.SETMEAL_DETAIL_RESOURCES);
+            setmealDetail = (Setmeal) JSON.parse(setmealDetailStr);
+            //1.2 redis没有数据
+            if (setmealDetail == null) {
+                //1.3 查询数据库数据
+                setmealDetail = setMealMapper.findById(setMealId);
+                Object setmealDetailToJson = JSON.toJSON(setmealDetail);
+                //1.4 数据存入redis缓存
+                jedisPool.getResource().set(RedisConstant.SETMEAL_DETAIL_RESOURCES, setmealDetailToJson.toString());
+            }
+        } catch (Exception e) {
+            //2. redis服务器异常, 查询数据库数据
+            setmealDetail = setMealMapper.findById(setMealId);
+        }
+
         //查询setMeal数据
-        return setMealMapper.findById(setMealId);
+        return setmealDetail;
     }
 }

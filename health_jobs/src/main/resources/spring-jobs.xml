@@ -27,16 +27,30 @@
     <!--清理img的类交给spring托管-->
     <bean id="clearImgJob" class="com.lzy.jobs.ClearImgJob"/>
     <!-- 注册JobDetail,作用是负责通过反射调用指定的Job -->
-    <bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean ">
+    <bean id="jobDetail1" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean ">
         <!-- 注入目标对象 -->
         <property name="targetObject" ref="clearImgJob"/>
         <!-- 注入目标方法 -->
-        <property name="targetMethod" value="clearImg"/>
+        <property name="targetMethod" value="clearSetMealImg"/>
+    </bean>
+    <!-- 注册JobDetail,作用是负责通过反射调用指定的Job -->
+    <bean id="jobDetail2" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean ">
+        <!-- 注入目标对象 -->
+        <property name="targetObject" ref="clearImgJob"/>
+        <!-- 注入目标方法 -->
+        <property name="targetMethod" value="clearMenuImg"/>
     </bean>
     <!-- 注册一个触发器，指定任务触发的时间 -->
-    <bean id="myTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <bean id="myTrigger1" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <!-- 注入JobDetail -->
-        <property name="jobDetail" ref="jobDetail"/>
+        <property name="jobDetail" ref="jobDetail1"/>
+        <!-- 指定触发的时间，基于Cron表达式 -->
+        <property name="cronExpression" value="0 0/1 * * * ? *"/>
+    </bean>
+    <!-- 注册一个触发器，指定任务触发的时间 -->
+    <bean id="myTrigger2" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!-- 注入JobDetail -->
+        <property name="jobDetail" ref="jobDetail2"/>
         <!-- 指定触发的时间，基于Cron表达式 -->
         <property name="cronExpression" value="0 0/1 * * * ? *"/>
     </bean>
@@ -45,7 +59,8 @@
         <!-- 注入多个触发器 -->
         <property name="triggers">
             <list>
-                <ref bean="myTrigger"/>
+                <ref bean="myTrigger1"/>
+                <ref bean="myTrigger2"/>
             </list>
         </property>
     </bean>

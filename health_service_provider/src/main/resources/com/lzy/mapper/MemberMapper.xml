@@ -9,7 +9,8 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         insert into t_member (fileNumber,name,sex,idCard,phoneNumber, regTime,password,email,birthday,remark)
-        values (#{fileNumber},#{name},#{sex},#{idCard},#{phoneNumber},#{regTime},#{password},#{email},#{birthday},#{remark})
+        values
+        (#{fileNumber},#{name},#{sex},#{idCard},#{phoneNumber},#{regTime},#{password},#{email},#{birthday},#{remark})
     </insert>
     <select id="findMemberNumberByDate" resultType="long" parameterType="map">
         SELECT COUNT(id) FROM `t_member` WHERE regTime
@@ -20,5 +21,20 @@
     </select>
     <select id="findAllCount" resultType="long">
          SELECT COUNT(id) FROM `t_member`
+    </select>
+    <select id="findSex" resultType="map">
+        SELECT COUNT(id) `value`, (CASE WHEN sex = 1 THEN '男' ELSE '女'  END) `name`
+        FROM `t_member` GROUP BY sex
+    </select>
+    <select id="getMemberAgeInfo" parameterType="map" resultType="int">
+        SELECT COUNT(id) `value` FROM `t_member`
+        <where>
+            <if test="endAge != 0">
+                age BETWEEN #{beginAge} AND #{endAge}
+            </if>
+            <if test="endAge == 0">
+                age &gt; 50
+            </if>
+        </where>
     </select>
 </mapper>

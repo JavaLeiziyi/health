@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzy.mapper.MenuMapper">
+    <resultMap id="menuMap" type="menu">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="linkUrl" property="linkUrl"/>
+        <result column="path" property="path"/>
+        <result column="priority" property="priority"/>
+        <result column="description" property="description"/>
+        <result column="icon" property="icon"/>
+        <result column="parentMenuId" property="parentMenuId"/>
+        <collection property="children"
+                    column="id"
+                    javaType="list"
+                    ofType="menu"
+                    select="com.lzy.mapper.MenuMapper.findLevel2Menu"/>
+    </resultMap>
+    <select id="findLevel1Menu" resultMap="menuMap" parameterType="string">
+        SELECT m.`id`,m.name,m.`linkUrl`,m.path,m.`priority`,m.`description`,m.`icon`,m.level,m.`parentMenuId`
+        FROM `t_user` u,`t_user_role` ur, `t_role` r, `t_role_menu` rm, `t_menu` m
+        WHERE ur.`user_id`= u.`id`
+        AND ur.`role_id` = r.`id` AND r.`id` = rm.`role_id` AND rm.`menu_id` = m.`id`
+        AND m.level = 1 AND u.`username` = #{username} ORDER BY m.`priority` ASC
+    </select>
+    <select id="findLevel2Menu" parameterType="int" resultType="menu">
+        SELECT m.`id`,m.name,m.`linkUrl`,m.path,m.`priority`,m.`description`,m.`icon`,m.`parentMenuId`
+        FROM `t_menu` m1, `t_menu` m
+        WHERE m1.id = m.parentMenuId
+        AND m.`parentMenuId`=#{id} ORDER BY m.`priority` ASC
+    </select>
+    <select id="findCondition" parameterType="string" resultType="menu">
+        SELECT * FROM `t_menu`
+        <where>
+            <if test="value != null and value.length > 0">
+                `name` LIKE #{queryString} OR linkUrl LIKE #{queryString}
+            </if>
+        </where>
+    </select>
+    <select id="findLevel" parameterType="string" resultType="menu">
+        SELECT * FROM `t_menu` WHERE `level`= #{level} AND parentMenuId IS NULL
+    </select>
+    <insert id="add" parameterType="menu">
+        <selectKey resultType="int" keyProperty="id" order="AFTER" keyColumn="id">
+            SELECT LAST_INSERT_ID();
+        </selectKey>
+        INSERT INTO `t_menu`
+        VALUES(#{id},#{name},#{linkUrl},#{path},#{priority},
+        #{description},#{icon},#{parentMenuId},#{level})
+    </insert>
+    <update id="addParentIdById" parameterType="map">
+        UPDATE `t_menu` SET parentMenuId = #{parentMenuId} WHERE id = #{id}
+    </update>
+    <delete id="delete" parameterType="int">
+        DELETE FROM `t_menu` WHERE id = #{id}
+    </delete>
+    <select id="selectIdBParentId" parameterType="int" resultType="int">
+        SELECT id FROM `t_menu` WHERE parentMenuId = #{parentMenuId}
+    </select>
+    <select id="findMenuByParentMenuId" parameterType="int" resultType="menu">
+        SELECT * FROM `t_menu` WHERE `level`= 2 AND parentMenuId IS NULL OR parentMenuId = #{parentMenuId}
+    </select>
+    <select id="findParentIdsById" resultType="int" parameterType="int">
+        SELECT parentMenuId FROM `t_menu` WHERE id = #{id}
+    </select>
+    <update id="updateParentMenuIdById" parameterType="int">
+        UPDATE `t_menu` SET parentMenuId = NULL WHERE id
+        IN (SELECT id FROM (SELECT id FROM `t_menu` WHERE parentMenuId = #{id}) AS temp)
+    </update>
+    <update id="editParentMenu" parameterType="menu">
+        UPDATE `t_menu`
+        <trim prefix="set" suffixOverrides=",">
+            <if test="name != null">
+                `name`=#{name},
+            </if>
+            <if test="linkUrl != null">
+                `linkUrl`=#{linkUrl},
+            </if>
+            <if test="path != null">
+                `path`=#{path},
+            </if>
+            <if test="priority != 0">
+                `priority`=#{priority},
+            </if>
+            <if test="icon != null">
+                `icon`=#{icon},
+            </if>
+            <if test="description != null">
+                `description`=#{description},
+            </if>
+            <if test="parentMenuId != 0">
+                `parentMenuId`=#{parentMenuId},
+            </if>
+            <if test="level != 0">
+                `level`=#{level},
+            </if>
+        </trim>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+</mapper>
