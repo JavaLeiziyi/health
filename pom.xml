@@ -28,7 +28,7 @@
         <spring.version>5.0.5.RELEASE</spring.version>
         <pagehelper.version>4.1.4</pagehelper.version>
         <servlet-api.version>2.5</servlet-api.version>
-        <dubbo.version>2.6.0</dubbo.version>
+        <dubbo.version>2.6.12</dubbo.version>
         <!--zookeeper3.4.7升级 到 3.4.14 或更高版本-->
         <zookeeper.version>3.4.14</zookeeper.version>
         <zkclient.version>0.1</zkclient.version>
